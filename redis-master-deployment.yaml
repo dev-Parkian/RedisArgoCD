@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      role: master
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: redis-master-container
+        image: k8s.gcr.io/redis:e2e
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: redis-master
+    role: master
+    tier: bakend
+  ports:
+  - port: 6379
+    targetPort: 6379
